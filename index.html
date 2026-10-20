@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gửi Tặng Bông Hoa Xinh Đẹp Nhất✨</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Montserrat:wght@300;400;500;600&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        body {
+            background: radial-gradient(circle at 50% 30%, #fce7f3 0%, #f472b6 50%, #db2777 100%);
+            color: #831843;
+            font-family: 'Quicksand', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            position: relative;
+        }
+
+        /* Canvas layered positioning */
+        #bgCanvas, #petalsCanvas, #flowerCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        #bgCanvas { z-index: 1; }
+        #petalsCanvas { z-index: 2; pointer-events: none; }
+        #flowerCanvas { z-index: 3; pointer-events: none; }
+
+        /* UI Overlays with vivid pink glassmorphism */
+        .glass-card {
+            background: rgba(255, 241, 246, 0.88);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 2px solid rgba(244, 114, 182, 0.8);
+            box-shadow: 0 20px 45px rgba(225, 29, 72, 0.35), 0 0 40px rgba(244, 114, 182, 0.6);
+        }
+
+        .glowing-text {
+            text-shadow: 0 0 15px rgba(244, 114, 182, 0.8), 0 0 30px rgba(225, 29, 72, 0.5);
+        }
+
+        .title-font {
+            font-family: 'Dancing Script', cursive;
+        }
+
+        /* Pulse / Heartbeat animation for overlay element */
+        @keyframes subtlePulse {
+            0%, 100% { transform: scale(1); opacity: 0.98; }
+            50% { transform: scale(1.04); opacity: 1; filter: drop-shadow(0 0 20px #f43f5e); }
+        }
+
+        .pulse-anim {
+            animation: subtlePulse 2.8s ease-in-out infinite;
+        }
+
+        /* Audio button animation */
+        @keyframes rotateMusic {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .music-spin {
+            animation: rotateMusic 8s linear infinite;
+        }
+
+        /* Custom scrollbar for long messages */
+        .custom-scroll::-webkit-scrollbar {
+            width: 5px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: rgba(251, 113, 133, 0.15);
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: rgba(225, 29, 72, 0.5);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen">
+
+    <!-- Canvas layers -->
+    <canvas id="bgCanvas"></canvas>
+    <canvas id="petalsCanvas"></canvas>
+    <canvas id="flowerCanvas"></canvas>
+
+    <!-- Music Control Button -->
+    <button id="musicBtn" class="fixed top-5 right-5 z-50 p-3 rounded-full glass-card text-rose-600 hover:text-rose-800 transition-all transform hover:scale-110 active:scale-95 flex items-center justify-center group shadow-xl cursor-pointer">
+        <svg id="musicIcon" class="w-6 h-6 music-spin text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12 0c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
+        </svg>
+        <span class="max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs transition-all duration-300 ease-in-out text-xs font-bold ml-0 group-hover:ml-2 text-pink-700">
+            Âm nhạc
+        </span>
+    </button>
+
+    <!-- Initial Interactive Screen -->
+    <div id="startOverlay" class="fixed inset-0 z-40 flex flex-col items-center justify-center bg-pink-500/25 backdrop-blur-md transition-opacity duration-700 cursor-pointer">
+        <div class="text-center p-8 rounded-3xl glass-card max-w-sm mx-4 border-2 border-pink-400 shadow-2xl pulse-anim">
+            <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-tr from-pink-500 via-rose-500 to-fuchsia-500 flex items-center justify-center shadow-lg shadow-pink-400/80">
+                <svg class="w-10 h-10 text-white translate-x-0.5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+            </div>
+            <h2 id="startTitle" class="text-3xl font-bold title-font text-rose-600 mb-2 glowing-text">Chạm tay vào màn hình</h2>
+            <p id="startSubtitle" class="text-sm text-pink-800 font-semibold tracking-wider">Sẽ có điều bất ngờ đến với bạn✨</p>
+        </div>
+    </div>
+
+    <!-- Main Message Box Card Overlay -->
+    <main id="mainContainer" class="relative z-30 w-full max-w-xl mx-4 p-6 sm:p-8 rounded-3xl glass-card transition-all duration-1000 transform opacity-0 translate-y-8 pointer-events-auto my-auto border-2 border-pink-300">
+        <!-- Top Subheader / Badge -->
+        <div class="flex items-center justify-between mb-4 pb-3 border-b border-pink-300">
+            <span id="leftTag" class="text-xs uppercase tracking-widest text-rose-700 font-bold bg-pink-200/90 px-3 py-1 rounded-full border border-pink-400">
+                Đôi lời chúc dành cho bạn
+            </span>
+            <span class="text-xs text-rose-700 font-mono font-bold bg-pink-100 px-2.5 py-0.5 rounded-md border border-pink-300">20/10 Special</span>
+        </div>
+
+        <!-- Main Title -->
+        <h1 id="topTitle" class="text-2xl sm:text-3xl font-bold title-font text-transparent bg-clip-text bg-gradient-to-r from-rose-600 via-pink-600 to-fuchsia-600 mb-5 glowing-text">
+            Gửi bông hoa xinh đẹp nhất
+        </h1>
+
+        <!-- Typewriter Card Content Area -->
+        <div class="relative min-h-[120px] max-h-[60vh] overflow-y-auto custom-scroll mb-6 pr-2">
+            <p id="cardText" class="text-base sm:text-lg leading-relaxed text-pink-950 font-semibold tracking-wide whitespace-pre-wrap break-words"></p>
+        </div>
+
+        <!-- Card Footer & Sender -->
+        <div class="flex items-center justify-end pt-3 border-t border-pink-300/80">
+            <div class="text-right">
+                <span class="text-xs text-pink-700 font-medium block">Thân gửi từ</span>
+                <span id="senderName" class="text-xl font-bold title-font text-rose-600 glowing-text">TLaam</span>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Dynamic Params extraction (Base64 URL parser with default fallback)
+        function getCardData() {
+            const defaults = {
+                lf: "Đôi lời chúc dành cho bạn",
+                tf: "Gửi bông hoa xinh đẹp nhất",
+                cf: "Nhân ngày 20/10, mình chúc bạn thật nhiều niềm vui, luôn vui vẻ, xinh đẹp và ngày càng hạnh phúc. Chúc bạn sẽ sớm hoàn thành mục tiêu, mơ ước của bản thân, sớm tìm được cho mình 1 bến đỗ bình yên nha. Sau này giàu thì đừng quên tui nhe ^_^ ❤️❤️.",
+                sf: "TLaam",
+                mf: "a.mp3"
+            };
+
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const encodedData = urlParams.get('id');
+                if (encodedData) {
+                    // Fix Base64 decoding with proper Unicode handling
+                    const binaryString = atob(encodedData);
+                    const bytes = new Uint8Array(binaryString.length);
+                    for (let i = 0; i < binaryString.length; i++) {
+                        bytes[i] = binaryString.charCodeAt(i);
+                    }
+                    const decodedText = new TextDecoder().decode(bytes);
+                    const parsed = JSON.parse(decodedText);
+                    return { ...defaults, ...parsed };
+                }
+            } catch (e) {
+                console.log("Using default card details due to parse fallback.");
+            }
+            return defaults;
+        }
+
+        const cardData = getCardData();
+
+        // Populate Static Texts
+        document.getElementById('leftTag').innerText = cardData.lf || "Đôi lời chúc dành cho bạn";
+        document.getElementById('topTitle').innerText = cardData.tf || "Gửi bông hoa xinh đẹp nhất";
+        document.getElementById('senderName').innerText = cardData.sf || "TLaam";
+
+        // Canvas Elements
+        const bgCanvas = document.getElementById('bgCanvas');
+        const petalsCanvas = document.getElementById('petalsCanvas');
+        const flowerCanvas = document.getElementById('flowerCanvas');
+
+        const bgCtx = bgCanvas.getContext('2d');
+        const petalsCtx = petalsCanvas.getContext('2d');
+        const flowerCtx = flowerCanvas.getContext('2d');
+
+        let width = 0;
+        let height = 0;
+
+        function resizeCanvas() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            bgCanvas.width = width;
+            bgCanvas.height = height;
+            petalsCanvas.width = width;
+            petalsCanvas.height = height;
+            flowerCanvas.width = width;
+            flowerCanvas.height = height;
+        }
+
+        // Glittering Twinkle Star Particle
+        class Sparkle {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.size = Math.random() * 3.5 + 1;
+                this.alpha = Math.random();
+                this.speedAlpha = Math.random() * 0.03 + 0.01;
+                this.increasing = Math.random() > 0.5;
+                const colors = ['#ffffff', '#fbcfe8', '#f472b6', '#fef08a', '#f43f5e'];
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+                this.spikes = Math.random() > 0.6 ? 4 : 0;
+            }
+
+            update() {
+                if (this.increasing) {
+                    this.alpha += this.speedAlpha;
+                    if (this.alpha >= 1) {
+                        this.alpha = 1;
+                        this.increasing = false;
+                    }
+                } else {
+                    this.alpha -= this.speedAlpha;
+                    if (this.alpha <= 0.1) {
+                        this.reset();
+                    }
+                }
+            }
+
+            draw() {
+                bgCtx.save();
+                bgCtx.globalAlpha = this.alpha;
+                bgCtx.fillStyle = this.color;
+                bgCtx.shadowColor = this.color;
+                bgCtx.shadowBlur = 12;
+
+                if (this.spikes === 4) {
+                    bgCtx.beginPath();
+                    bgCtx.translate(this.x, this.y);
+                    for (let i = 0; i < 4; i++) {
+                        bgCtx.rotate(Math.PI / 2);
+                        bgCtx.lineTo(0, this.size * 2.5);
+                        bgCtx.lineTo(this.size * 0.3, this.size * 0.3);
+                    }
+                    bgCtx.fill();
+                } else {
+                    bgCtx.beginPath();
+                    bgCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    bgCtx.fill();
+                }
+                bgCtx.restore();
+            }
+        }
+
+        // Falling & Flying Floral Petals
+        class FallingPetal {
+            constructor() {
+                this.reset(true);
+            }
+
+            reset(initial = false) {
+                this.x = Math.random() * (width + 100) - 50;
+                this.y = initial ? Math.random() * height : -30;
+                this.size = Math.random() * 12 + 8;
+                this.speedY = Math.random() * 1.5 + 0.8;
+                this.speedX = Math.random() * 1.2 - 0.4;
+                this.rotation = Math.random() * Math.PI * 2;
+                this.rotationSpeed = (Math.random() - 0.5) * 0.04;
+                this.oscillationSpeed = Math.random() * 0.03 + 0.01;
+                this.oscillationStep = Math.random() * Math.PI * 2;
+                this.opacity = Math.random() * 0.7 + 0.3;
+
+                const petalColors = [
+                    ['#f43f5e', '#fda4af'],
+                    ['#ec4899', '#fbcfe8'],
+                    ['#e11d48', '#fecdd3'],
+                    ['#d946ef', '#f5d0fe'],
+                    ['#fb7185', '#fff1f2']
+                ];
+                this.colorPair = petalColors[Math.floor(Math.random() * petalColors.length)];
+            }
+
+            update() {
+                this.y += this.speedY;
+                this.oscillationStep += this.oscillationSpeed;
+                this.x += Math.sin(this.oscillationStep) * 1.2 + this.speedX;
+                this.rotation += this.rotationSpeed;
+
+                if (this.y > height + 40 || this.x < -60 || this.x > width + 60) {
+                    this.reset(false);
+                }
+            }
+
+            draw() {
+                petalsCtx.save();
+                petalsCtx.translate(this.x, this.y);
+                petalsCtx.rotate(this.rotation);
+                petalsCtx.globalAlpha = this.opacity;
+
+                const grad = petalsCtx.createLinearGradient(-this.size / 2, -this.size / 2, this.size / 2, this.size / 2);
+                grad.addColorStop(0, this.colorPair[0]);
+                grad.addColorStop(1, this.colorPair[1]);
+
+                petalsCtx.fillStyle = grad;
+                petalsCtx.shadowColor = 'rgba(244, 63, 94, 0.4)';
+                petalsCtx.shadowBlur = 8;
+
+                petalsCtx.beginPath();
+                petalsCtx.moveTo(0, -this.size);
+                petalsCtx.bezierCurveTo(this.size * 0.8, -this.size * 0.5, this.size * 0.8, this.size * 0.5, 0, this.size);
+                petalsCtx.bezierCurveTo(-this.size * 0.8, this.size * 0.5, -this.size * 0.8, -this.size * 0.5, 0, -this.size);
+                petalsCtx.fill();
+
+                petalsCtx.restore();
+            }
+        }
+
+        const sparkles = Array.from({ length: 80 }, () => new Sparkle());
+        const fallingPetals = Array.from({ length: 40 }, () => new FallingPetal());
+
+        function animateBgAndPetals() {
+            bgCtx.clearRect(0, 0, width, height);
+            petalsCtx.clearRect(0, 0, width, height);
+
+            const bgGradient = bgCtx.createRadialGradient(width / 2, height * 0.4, 30, width / 2, height / 2, Math.max(width, height));
+            bgGradient.addColorStop(0, '#fdf2f8');
+            bgGradient.addColorStop(0.3, '#fbcfe8');
+            bgGradient.addColorStop(0.65, '#f472b6');
+            bgGradient.addColorStop(1, '#be185d');
+            bgCtx.fillStyle = bgGradient;
+            bgCtx.fillRect(0, 0, width, height);
+
+            sparkles.forEach(s => {
+                s.update();
+                s.draw();
+            });
+
+            fallingPetals.forEach(p => {
+                p.update();
+                p.draw();
+            });
+
+            requestAnimationFrame(animateBgAndPetals);
+        }
+
+        class Flower {
+            constructor(x, targetHeight, maxRadius, delay) {
+                this.x = x;
+                this.targetHeight = targetHeight;
+                this.currentStemHeight = 0;
+                this.maxRadius = maxRadius;
+                this.currentRadius = 0;
+                this.delay = delay;
+                this.startTime = Date.now() + delay;
+                this.petals = Math.floor(Math.random() * 4) + 6;
+                const petalPalettes = [
+                    ['#f43f5e', '#fb7185', '#fce7f3'],
+                    ['#ec4899', '#f472b6', '#fbcfe8'],
+                    ['#e11d48', '#f43f5e', '#fecdd3'],
+                    ['#d946ef', '#f0abfc', '#fdf4ff']
+                ];
+                this.palette = petalPalettes[Math.floor(Math.random() * petalPalettes.length)];
+            }
+
+            drawStem(ctx) {
+                const now = Date.now();
+                if (now < this.startTime) return;
+
+                const progress = Math.min(1, (now - this.startTime) / 2200);
+                this.currentStemHeight = this.targetHeight * this.easeOutCubic(progress);
+
+                const baseY = height;
+                const topY = height - this.currentStemHeight;
+
+                ctx.beginPath();
+                ctx.moveTo(this.x, baseY);
+                const controlX = this.x + Math.sin(this.currentStemHeight * 0.02) * 25;
+                ctx.quadraticCurveTo(controlX, baseY - this.currentStemHeight / 2, this.x, topY);
+                ctx.strokeStyle = '#10b981';
+                ctx.lineWidth = Math.max(3, this.maxRadius * 0.14);
+                ctx.lineCap = 'round';
+                ctx.stroke();
+
+                if (progress > 0.4) {
+                    const leafY = baseY - this.currentStemHeight * 0.45;
+                    ctx.fillStyle = '#059669';
+                    ctx.beginPath();
+                    ctx.ellipse(this.x + 14, leafY, 16, 7, 0.4, 0, Math.PI * 2);
+                    ctx.ellipse(this.x - 14, leafY + 10, 14, 6, -0.4, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                if (progress >= 0.85) {
+                    const bloomProgress = Math.min(1, (now - (this.startTime + 1800)) / 1500);
+                    if (bloomProgress > 0) {
+                        this.currentRadius = this.maxRadius * this.easeOutBack(bloomProgress);
+                        this.drawBloom(ctx, this.x, topY, this.currentRadius);
+                    }
+                }
+            }
+
+            drawBloom(ctx, cx, cy, radius) {
+                if (radius <= 0) return;
+
+                ctx.save();
+                ctx.translate(cx, cy);
+
+                for (let i = 0; i < this.petals; i++) {
+                    const angle = (i * 2 * Math.PI) / this.petals;
+                    ctx.save();
+                    ctx.rotate(angle);
+
+                    const petalGradient = ctx.createRadialGradient(0, 0, 2, 0, radius, radius * 1.2);
+                    petalGradient.addColorStop(0, this.palette[0]);
+                    petalGradient.addColorStop(0.65, this.palette[1]);
+                    petalGradient.addColorStop(1, this.palette[2]);
+
+                    ctx.beginPath();
+                    ctx.moveTo(0, 0);
+                    ctx.quadraticCurveTo(radius * 0.5, radius * 0.6, 0, radius * 1.2);
+                    ctx.quadraticCurveTo(-radius * 0.5, radius * 0.6, 0, 0);
+                    ctx.fillStyle = petalGradient;
+                    ctx.shadowColor = 'rgba(244, 63, 94, 0.6)';
+                    ctx.shadowBlur = 15;
+                    ctx.fill();
+                    ctx.restore();
+                }
+
+                ctx.beginPath();
+                ctx.arc(0, 0, radius * 0.35, 0, Math.PI * 2);
+                const centerGrad = ctx.createRadialGradient(0, 0, 1, 0, 0, radius * 0.35);
+                centerGrad.addColorStop(0, '#fef08a');
+                centerGrad.addColorStop(0.7, '#f59e0b');
+                centerGrad.addColorStop(1, '#d97706');
+                ctx.fillStyle = centerGrad;
+                ctx.shadowColor = '#fde047';
+                ctx.shadowBlur = 10;
+                ctx.fill();
+
+                ctx.restore();
+            }
+
+            easeOutCubic(t) {
+                return 1 - Math.pow(1 - t, 3);
+            }
+
+            easeOutBack(t) {
+                const c1 = 1.70158;
+                const c3 = c1 + 1;
+                return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
+            }
+        }
+
+        let flowers = [];
+
+        function initFlowers() {
+            flowers = [];
+            const isMobile = width < 640;
+            const count = isMobile ? 6 : 10;
+            const spacing = width / (count + 1);
+
+            for (let i = 0; i < count; i++) {
+                const x = spacing * (i + 1) + (Math.random() * 20 - 10);
+                const targetHeight = height * (0.35 + Math.random() * 0.28);
+                const maxRadius = isMobile ? (22 + Math.random() * 10) : (30 + Math.random() * 15);
+                const delay = i * 260;
+                flowers.push(new Flower(x, targetHeight, maxRadius, delay));
+            }
+        }
+
+        function animateFlowers() {
+            flowerCtx.clearRect(0, 0, width, height);
+            flowers.forEach(flower => flower.drawStem(flowerCtx));
+            requestAnimationFrame(animateFlowers);
+        }
+
+        class AmbientSynth {
+            constructor() {
+                this.ctx = null;
+                this.isPlaying = false;
+                this.notes = [261.63, 329.63, 392.00, 523.25, 587.33, 659.25];
+                this.timer = null;
+            }
+
+            init() {
+                if (!this.ctx) {
+                    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                    this.ctx = new AudioCtx();
+                }
+            }
+
+            playNote() {
+                if (!this.isPlaying || !this.ctx) return;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+
+                const freq = this.notes[Math.floor(Math.random() * this.notes.length)];
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+
+                gain.gain.setValueAtTime(0.01, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.12, this.ctx.currentTime + 0.8);
+                gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 3.5);
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+
+                osc.start();
+                osc.stop(this.ctx.currentTime + 3.6);
+            }
+
+            start() {
+                this.init();
+                if (this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+                this.isPlaying = true;
+                this.playNote();
+                this.timer = setInterval(() => this.playNote(), 1800);
+            }
+
+            stop() {
+                this.isPlaying = false;
+                if (this.timer) clearInterval(this.timer);
+            }
+
+            toggle() {
+                if (this.isPlaying) {
+                    this.stop();
+                } else {
+                    this.start();
+                }
+                return this.isPlaying;
+            }
+        }
+
+        const synth = new AmbientSynth();
+
+        function startTypewriter(text, elementId, speed = 40) {
+            const el = document.getElementById(elementId);
+            el.textContent = "";
+            let i = 0;
+
+            function type() {
+                if (i < text.length) {
+                    el.textContent += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                }
+            }
+            type();
+        }
+
+        const startOverlay = document.getElementById('startOverlay');
+        const mainContainer = document.getElementById('mainContainer');
+        const musicBtn = document.getElementById('musicBtn');
+        const musicIcon = document.getElementById('musicIcon');
+
+        function revealCard() {
+            synth.start();
+
+            startOverlay.style.opacity = '0';
+            setTimeout(() => {
+                startOverlay.style.display = 'none';
+            }, 700);
+
+            setTimeout(() => {
+                mainContainer.classList.remove('opacity-0', 'translate-y-8');
+                mainContainer.classList.add('opacity-100', 'translate-y-0');
+                startTypewriter(cardData.cf, 'cardText', 40);
+            }, 300);
+        }
+
+        startOverlay.addEventListener('click', revealCard);
+
+        musicBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const playing = synth.toggle();
+            if (playing) {
+                musicIcon.classList.add('music-spin');
+                musicBtn.classList.remove('opacity-60');
+            } else {
+                musicIcon.classList.remove('music-spin');
+                musicBtn.classList.add('opacity-60');
+            }
+        });
+
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            initFlowers();
+        });
+
+        window.onload = function() {
+            resizeCanvas();
+            animateBgAndPetals();
+            initFlowers();
+            animateFlowers();
+        };
+    </script>
+</body>
+</html>
